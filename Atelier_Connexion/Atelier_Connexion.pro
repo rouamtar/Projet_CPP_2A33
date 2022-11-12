@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql printsupport charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,12 +28,14 @@ SOURCES += \
     aff.juridique.cpp \
         main.cpp \
         mainwindow.cpp \
-    connection.cpp
+    connection.cpp \
+    qcustomplot.cpp
 
 HEADERS += \
     aff.juridique.h \
         mainwindow.h \
-    connection.h
+    connection.h \
+    qcustomplot.h
 
 FORMS += \
         mainwindow.ui
