@@ -29,7 +29,7 @@ QSqlQueryModel * historique::Afficher( )
   QSqlQueryModel * model= new QSqlQueryModel();
 
        model->setQuery("select DATE_H, TYPE_OPERATION from HISTORIQUE ;");
-       model->setHeaderData(0, Qt::Horizontal,QObject:: tr("date et heure"));
+       model->setHeaderData(0, Qt::Horizontal,QObject:: tr("date "));
        model->setHeaderData(1, Qt::Horizontal,QObject:: tr("Operation"));
 
  return model;
