@@ -1,9 +1,4 @@
-QT       += core gui
-QT += sql
-QT += core gui charts
-QT += serialport
-QT += core
-QT       += core gui sql printsupport charts serialport
+QT += core gui sql printsupport charts serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -23,8 +18,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     aff.juridique.cpp \
     arduino.cpp \
+    audience.cpp \
     connection.cpp \
     dc.cpp \
+    historique.cpp \
     main.cpp \
     mainwindow.cpp \
     perso.cpp \
@@ -34,8 +31,10 @@ SOURCES += \
 HEADERS += \
     aff.juridique.h \
     arduino.h \
+    audience.h \
     connection.h \
     dc.h \
+    historique.h \
     mainwindow.h \
     perso.h \
     qcustomplot.h \
@@ -49,3 +48,8 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
  QT += printsupport
+
+RESOURCES += \
+    sound.qrc
+
+DISTFILES +=

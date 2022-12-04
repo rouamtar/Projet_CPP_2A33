@@ -23,13 +23,37 @@
 #include"aff.juridique.h"
 #include <QtCharts>
 #include <QPainter>
-////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////// yassmine
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include "audience.h"
+#include<QMessageBox>
+#include<QIntValidator>
+#include<QDateTime>
+#include<QDate>
+#include<QTextEdit>
+#include<QTextDocument>
+#include<QPdfWriter>
+#include<QtPrintSupport/QPrintDialog>
+#include"historique.h"
+#include<QFileDialog>
+#include<QtPrintSupport/QPrinter>
+#include<QTextStream>
+#include<QTimer>
+#include <QObject>
+#include <QPixmap>
+//////////////////////////////////////////////////////
+
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->label_3->setPixmap(QPixmap("C:/Users/21652/Desktop/integration_finale/smartcourt_ela/test.png"));
+    login = 0 ;
+    ui->stackedWidget->setCurrentIndex(0);
     //arduino
         int ret=a.connect_arduino();
         switch(ret){
@@ -53,11 +77,11 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->tableView_archive_dossier->setModel(A.afficher_archive()); // ajouté // affichage table view archive
         ui->stackedWidget->setCurrentIndex(0); // ajouté // stacked widget first window
 
-       /////////////////////////////////////////////////////
-       ///
-       ///
-       ///
-        QSqlQuery q1,q2,q3,q4;
+       ///////////////////////////////////////////////////// ahmed
+        QStringList list1=(QStringList()<<" "<<"Numsalle"<<"Etage"<<"Capacité"<<"Type");
+        ui->comboBox_tri_ahmed->addItems(list1);
+
+       QSqlQuery q1,q2,q3,q4;
         qreal adm=0,aud=0,wc=0,buv=0;
         q1.prepare("select *from salle where type='administration'"); q1.exec();
         q2.prepare("select *from salle where type='audience'"); q2.exec();
@@ -99,6 +123,107 @@ MainWindow::MainWindow(QWidget *parent) :
                chartView->show();
 
                ui->table_salle_ahmed->setModel(Etmp.afficher());
+
+
+    ////////////////////////////////////////////////////////////////////////////////////
+
+               //ui->le_num_aud->setValidator( new QIntValidator(0,9999999, this));
+               ui->le_duree->setValidator( new QIntValidator(0,9999999, this));
+               ui->le_salle->setValidator(new QIntValidator(0,9999999, this));
+               ui->tab_des_audiences->setModel(A1.afficher());
+               ui->tv_tri->setModel(A1.afficher());
+               ui-> tv_histo->setModel(H.Afficher());
+
+               //logo smart court:
+                  /* QPixmap logo("C:/Users/21652/Downloads/logo2.png");
+                   int w_logo = ui->label_logo->width();
+                   int h_logo = ui->label_logo->height();
+                   ui->label_logo->setPixmap(logo.scaled(w_logo,h_logo,Qt::KeepAspectRatio));*/
+
+                   //statistique
+
+                   QSqlQuery q1y,q2y,q3y,q4y;
+                      qreal s1=0,s2=0,s3=0,s4=0;
+
+                      q1y.prepare("select *from AUDIENCES where salle=1");
+                      q1y.exec();
+
+                      q2y.prepare("select *from AUDIENCES where salle=2");
+                      q2y.exec();
+
+                      q3y.prepare("select *from AUDIENCES where salle=3");
+                      q3y.exec();
+
+                      q4y.prepare("select *from AUDIENCES where salle=4");
+                      q4y.exec();
+
+                      while(q1y.next()){s1++;}
+                      while(q2y.next()){s2++;}
+                      while(q3y.next()){s3++;}
+                      while(q4y.next()){s4++;}
+
+                             QBarSet *set0y = new QBarSet("salle1");
+                             QBarSet *set1y = new QBarSet("salle2");
+                             QBarSet *set2y = new QBarSet("salle3");
+                             QBarSet *set3y = new QBarSet("salle4");
+
+                             *set0y << s1;
+                             *set1y << s2;
+                             *set2y << s3;
+                             *set3y << s4;
+                      QBarSeries *seriesy = new QBarSeries();
+                      seriesy->append(set0y);
+                      seriesy->append(set1y);
+                      seriesy->append(set2y);
+                      seriesy->append(set3y);
+
+                      QChart *charty = new QChart();
+                      charty->addSeries(seriesy);
+                             charty->createDefaultAxes();
+                                 charty->axes(Qt::Horizontal).first()->hide();
+                                 QBarCategoryAxis();
+                       QPalette paly = qApp->palette();
+                       paly.setColor(QPalette::Window, QRgb(0xffffff));
+                             paly.setColor(QPalette::WindowText, QRgb(0x404044));
+
+                             // Apply palette changes to the application
+                             qApp->setPalette(paly);
+
+                  QChartView *chartViewy = new QChartView(charty);
+                     // Used to display the chart
+                     chartViewy = new QChartView(charty,ui->horizontalFrame_stat);
+                     chartViewy->setRenderHint(QPainter::Antialiasing);
+                     chartViewy->setMinimumSize(400,400);
+                     chartViewy->chart()->setAnimationOptions(QChart::AllAnimations);
+                     chartViewy->chart()->legend()->setAlignment(Qt::AlignRight);
+
+                     chartViewy->show();
+
+                       /*QBarSet *set0 = new QBarSet("num des Audience  par mois");
+
+
+                       *set0 <<80<<74<<68<<100<<59<<90<<77<<100<<70;
+
+
+                       QBarSeries *series = new QBarSeries();
+                       series->append(set0);
+
+
+                       QChart *chart = new QChart();
+                       chart->addSeries(series);
+                       chart->setTitle("statistiques");
+                       chart->setAnimationOptions(QChart::SeriesAnimations);
+
+                       QStringList categories;
+                       categories <<"janvier"<<"fevrier"<<"mars"<<"avril"<<"mai"<<"juin"<<"juillet"<<"aout"<<"septempre";
+                       QBarCategoryAxis *axis = new QBarCategoryAxis();
+                       axis->append(categories);
+                       chart->createDefaultAxes();
+                       chart->setAxisX(axis, series);
+
+                       QChartView *chartview = new QChartView(chart);
+                       chartview->setParent(ui->horizontalFrame_stat);}*/
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 
@@ -251,16 +376,6 @@ void MainWindow::on_pb_affichier_clicked()
       ////
       QStringList list=(QStringList()<<" "<<"Numsalle"<<"Etage"<<"Capacité"<<"Type");
       ui->comboBox_tri_ahmed->addItems(list);
-
-
-
-
-
-
-
-
-
-
 
     ui->label_ajout->setStyleSheet("color: #00c800;");
 
@@ -491,12 +606,7 @@ else if (data == "2"){
 
              A.classer(code,"non classé");
      ui->tab_affjuridique->setModel(A.afficher());
-}
-
-
-
-
-
+    }
 }
 
 void MainWindow::on_pbAjouter_clicked()
@@ -675,10 +785,33 @@ void MainWindow::on_pushButton_connexion_clicked() // athentification
     QMessageBox msgBox;
     QString username = ui->lineEdit_username->text();
     QString password = ui->lineEdit_password->text();
-    if(username == "admin" && password == "admin"){
+    if(username == "personnel" && password == "admin"){
+        msgBox.setText("Connecté avec succes.");
+        msgBox.exec();
+        ui->stackedWidget->setCurrentIndex(1);
+        login = 1 ;
+
+    }
+    else if(username == "affaire" && password == "admin"){
         msgBox.setText("Connecté avec succes.");
         msgBox.exec();
         ui->stackedWidget->setCurrentIndex(2);
+        login = 2 ;
+
+    }
+    else if(username == "salle" && password == "admin"){
+        msgBox.setText("Connecté avec succes.");
+        msgBox.exec();
+        ui->stackedWidget->setCurrentIndex(3);
+        login = 3 ;
+
+    }
+    else if(username == "audience" && password == "admin"){
+        msgBox.setText("Connecté avec succes.");
+        msgBox.exec();
+        ui->stackedWidget->setCurrentIndex(4);
+        A1.notifcation();
+        login = 4;
 
     }
     else {
@@ -687,6 +820,8 @@ void MainWindow::on_pushButton_connexion_clicked() // athentification
             msgBox.exec();
         }
     }
+    ui->lineEdit_password->clear();
+    ui->lineEdit_username->clear();
 }
 
 void MainWindow::on_pushButton_archiver_roua_clicked() // bouton archiver
@@ -1163,11 +1298,274 @@ else  ui->pushButton_salle_46->setStyleSheet("background-color: qlineargradient(
 }
 
 
+//////////////////////////////////////////////////////////////////////// yassmine
 
 
-
-void MainWindow::on_pushButton_6_clicked()
+void MainWindow::update()
 {
-    ui->stackedWidget->setCurrentIndex(3);
+    data=a.read_from_arduino();
+    if(data=="1")
+    {
+        bool tester=A1.valider(data);
+
+        if(tester)
+        {
+            a.write_to_arduino("1");
+        }else
+        {
+             a.write_to_arduino("0");
+        }
+    }
 }
 
+void MainWindow::on_pb_modifier_clicked()
+{
+
+       int id=ui->le_rech->text().toInt();
+       int salle=ui->salle_m->text().toInt();
+       int duree=ui->duree_m->text().toInt();
+       QDate date= ui->date_m->date();
+      bool test= A1.modifier(id,salle,duree,date);
+       QMessageBox msg;
+      if(test)
+      { ui->tab_des_audiences->setModel(A1.afficher());
+
+          ui->tv_tri->setModel(A1.afficher());
+                      msg.setText("modifie avec succés");
+                       QString operation="Modifier";
+                      historique H(operation,id);
+                      H.Ajouter();
+                       ui->tv_histo->setModel(H.Afficher());
+                      }
+                      else
+                      {
+                      msg.setText("Echec au niveau de la modif ");
+                      }
+                      msg.exec();
+
+                  ui->le_rech->clear();
+                  ui->salle_m->clear();
+                  ui->date_m->clear();
+                  ui->duree_m->clear();
+}
+
+
+
+void MainWindow::on_le_tri_na_textChanged(const QString &arg1)
+{
+       ui->tv_tri->setModel( A1.rechercher(arg1));
+}
+
+void MainWindow::on_pb_PDF_clicked()
+{
+    QString strStream;
+                     QTextStream out(&strStream);
+
+                     const int rowCount = ui->tab_des_audiences->model()->rowCount();
+                     const int columnCount = ui->tab_des_audiences->model()->columnCount();
+
+                     out <<  "<html>\n"
+                         "<head>\n"
+                         "<meta Content=\"Text/html; charset=Windows-1251\">\n"
+                         <<  QString("<title>%1</title>\n").arg("strTitle")
+                         <<  "</head>\n"
+                         "<body bgcolor=#ffffff link=#5000A0>\n"
+
+                        //     "<align='right'> " << datefich << "</align>"
+                         "<center> <H1>Liste des audiences </H1></br></br><table border=1 cellspacing=0 cellpadding=2>\n";
+
+                     // headers
+                     out << "<thead><tr bgcolor=#f0f0f0> <th>Numero</th>";
+                     for (int column = 0; column < columnCount; column++)
+                         if (!ui->tab_des_audiences->isColumnHidden(column))
+                             out << QString("<th>%1</th>").arg(ui->tab_des_audiences->model()->headerData(column, Qt::Horizontal).toString());
+                     out << "</tr></thead>\n";
+
+                     // data table
+                     for (int row = 0; row < rowCount; row++) {
+                         out << "<tr> <td bkcolor=0>" << row+1 <<"</td>";
+                         for (int column = 0; column < columnCount; column++) {
+                             if (!ui->tab_des_audiences->isColumnHidden(column)) {
+                                 QString data = ui->tab_des_audiences->model()->data(ui->tab_des_audiences->model()->index(row, column)).toString().simplified();
+                                 out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
+                             }
+                         }
+                         out << "</tr>\n";
+                     }
+                     out <<  "</table> </center>\n"
+                         "</body>\n"
+                         "</html>\n";
+
+                 QString fileName = QFileDialog::getSaveFileName((QWidget* )0, "Sauvegarder en PDF", QString(), "*.pdf");
+                 if (QFileInfo(fileName).suffix().isEmpty()) { fileName.append(".pdf"); }
+
+                QPrinter printer (QPrinter::PrinterResolution);
+                printer.setOutputFormat(QPrinter::PdfFormat);
+                printer.setPaperSize(QPrinter::A4);
+                printer.setOutputFileName(fileName);
+
+                 QTextDocument doc;
+                 doc.setHtml(strStream);
+                 doc.setPageSize(printer.pageRect().size()); // This is necessary if you want to hide the page number
+                 doc.print(&printer);
+}
+
+void MainWindow::on_pb_imprimer_clicked()
+{
+    QPrinter printer;
+
+        printer.setPrinterName("desiered printer name");
+
+      QPrintDialog dialog(&printer,this);
+
+        if(dialog.exec()== QDialog::Rejected)
+
+            return;
+
+}
+
+void MainWindow::on_pb_ajouter_yassmine_clicked()
+{
+    QMessageBox msgBox;
+
+    int salle=ui->le_salle->text().toInt();
+    int duree=ui->le_duree->text().toInt();
+    QDate datime=ui->dateTimeEdit->date();
+   Audience A(salle,duree,datime) ;
+   bool test=A.ajouter();
+
+   if (test)
+    { msgBox.setText( "ajout  avec succes.");
+
+       QString operation="Ajout";
+
+        ui-> tv_histo->setModel(H.Afficher());
+
+           ui->tab_des_audiences->setModel(A1.afficher());
+           ui->tv_tri->setModel(A1.afficher());
+           ui->le_salle->clear();
+           ui->dateTimeEdit->clear();
+           ui->le_duree->clear();
+      }
+    else
+
+     msgBox.setText("echec d'ajout");
+     msgBox.exec();
+}
+
+void MainWindow::on_pb_supprimer_yassmine_clicked()
+{
+    Audience A1;
+      historique H;
+    int id=ui->le_num_aud_supp->text().toInt();
+    bool test=A1.supprimer(id);
+    QMessageBox msgBox;
+    if (test)
+    {msgBox.setText( "supprimer avec succes.");
+    ui->tab_des_audiences->setModel(A1.afficher());
+    QString operation="Suppression";
+    historique H(operation,id);
+    H.Ajouter();
+     ui->tv_histo->setModel(H.Afficher());
+
+
+    }
+    else
+    msgBox.setText("echec de supprimer");
+    msgBox.exec();
+}
+
+
+void MainWindow::on_pb_rechercher_yassmine_clicked()
+{
+    QSqlQuery query;
+    query.prepare("select salle, duree ,date_a from Audiences where num_aud=?;");
+    query.addBindValue(ui->le_rech->text());
+    if(query.exec())
+       {
+        while(query.next())
+         {
+                     ui->salle_m->setText(query.value(0).toString());
+                     ui->duree_m->setText(query.value(1).toString());
+                     ui->date_m->setDate(query.value(2).toDate());
+
+            }
+        }
+}
+
+void MainWindow::on_pb_email_yassmine_clicked()
+{
+    QString link="https://mail.google.com/mail/u/0/#i"
+                 "5ox?compose=new";
+        QDesktopServices::openUrl(link);
+}
+
+void MainWindow::on_pushButton_rechercher_yassmine_clicked()
+{
+    Audience A1;
+            A1.setsalle(ui->lineEdit_rechercher->text().toInt());
+            ui->tab_des_audiences->setModel(A1.rechercher_salle(A1.getsalle()));
+            ui->label_re->setStyleSheet("color: #00c800;");
+            ui->label_re->setText("done!");
+            QTimer::singleShot(2000,this,[this] () { ui->label_re->setText(""); });
+}
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    if (login == 1)
+    ui->stackedWidget->setCurrentIndex(1);
+    else {
+        ui->label_acc->setStyleSheet("color: #ff0000;");
+        ui->label_acc->setText("page inaccessible");
+        QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });
+    }
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    if (login == 4)
+    ui->stackedWidget->setCurrentIndex(4);
+    else {
+        ui->label_acc->setStyleSheet("color: #ff0000;");
+        ui->label_acc->setText("page inaccessible");
+        QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });
+    }
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    if (login == 2)
+    ui->stackedWidget->setCurrentIndex(2);
+    else {
+        ui->label_acc->setStyleSheet("color: #ff0000;");
+        ui->label_acc->setText("page inaccessible");
+        QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });
+    }
+}
+void MainWindow::on_pushButton_6_clicked()
+{
+    if (login == 3)
+    ui->stackedWidget->setCurrentIndex(3);
+    else {
+        ui->label_acc->setStyleSheet("color: #ff0000;");
+        ui->label_acc->setText("page inaccessible");
+        QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });
+    }
+}
+
+void MainWindow::on_pushButton_8_clicked()
+{
+    if (login != 0)
+    {
+        ui->label_acc->setStyleSheet("color: #ff0000;");
+        ui->label_acc->setText("vous êtes deja connecté ! ");
+        QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });
+    }
+}
+
+void MainWindow::on_pushButton_deconnexion_clicked()
+{
+     ui->stackedWidget->setCurrentIndex(0);
+     login = 0 ;
+}

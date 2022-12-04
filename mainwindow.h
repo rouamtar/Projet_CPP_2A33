@@ -23,6 +23,15 @@
 #include "aff.juridique.h"
 #include <QVector>
 #include "arduino.h"
+/////////////////////////////////////////////
+#include <QMainWindow>
+#include  "audience.h"
+#include<QtCharts>
+#include<QChartView>
+#include<QBarSet>
+#include<QBarSeries>
+#include "historique.h"
+#include "arduino.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -116,6 +125,40 @@ private slots:
 
     void on_pushButton_6_clicked();
 
+
+    ////////////////////////////////////////////
+
+    void on_pb_ajouter_yassmine_clicked();
+
+    void on_pb_supprimer_yassmine_clicked();
+
+    void on_pb_rechercher_yassmine_clicked();
+
+    void on_pb_modifier_clicked();
+
+    void on_le_tri_na_textChanged(const QString &arg1);
+
+    void on_pb_PDF_clicked();
+
+    void on_pb_imprimer_clicked();
+
+    void on_pb_email_yassmine_clicked();
+
+    void update();
+
+   void on_pushButton_rechercher_yassmine_clicked();
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void on_pushButton_2_clicked();
+
+   void on_pushButton_3_clicked();
+
+   void on_pushButton_5_clicked();
+
+   void on_pushButton_8_clicked();
+
+   void on_pushButton_deconnexion_clicked();
+
 private:
     Ui::MainWindow *ui;
     QByteArray data;
@@ -125,6 +168,9 @@ private:
     dc d;
     Affjuridique A;
     salle Etmp;
+    Audience A1;
+    historique H;
+    int login ;
 
 
 };
