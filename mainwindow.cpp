@@ -54,7 +54,51 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->stackedWidget->setCurrentIndex(0); // ajouté // stacked widget first window
 
        /////////////////////////////////////////////////////
+       ///
+       ///
+       ///
+        QSqlQuery q1,q2,q3,q4;
+        qreal adm=0,aud=0,wc=0,buv=0;
+        q1.prepare("select *from salle where type='administration'"); q1.exec();
+        q2.prepare("select *from salle where type='audience'"); q2.exec();
+        q3.prepare("select *from salle where type='wc'"); q3.exec();
+        q4.prepare("select *from salle where type='buvette'"); q4.exec();
+        while(q1.next()){adm++;}
+        while(q2.next()){aud++;}
+        while(q3.next()){wc++;}
+        while(q4.next()){buv++;}
+        QBarSet *set0 = new QBarSet("Administration");
+               QBarSet *set1 = new QBarSet("Audience");
+               QBarSet *set2 = new QBarSet("WC");
+               QBarSet *set3 = new QBarSet("Buvette");
+               *set0 << adm;
+               *set1 << aud;
+               *set2 << wc;
+               *set3 << buv;
+        QBarSeries *series = new QBarSeries();
+               series->append(set0);
+               series->append(set1);
+               series->append(set2);
+               series->append(set3);
+        QChart *chart = new QChart();
+               chart->addSeries(series);
+               chart->createDefaultAxes();
+               chart->axes(Qt::Horizontal).first()->hide();
+        QBarCategoryAxis();
+        QPalette pal = qApp->palette();
+               pal.setColor(QPalette::Window, QRgb(0xffffff));
+               pal.setColor(QPalette::WindowText, QRgb(0x404044));
+               // Apply palette changes to the application
+               qApp->setPalette(pal);
+        QChartView *chartView ;
+               chartView = new QChartView(chart,ui->horizontalFrame_stat_ahmed);
+               chartView->setRenderHint(QPainter::Antialiasing);
+               chartView->setMinimumSize(400,400);
+               chartView->chart()->setAnimationOptions(QChart::AllAnimations);
+               chartView->chart()->legend()->setAlignment(Qt::AlignRight);
+               chartView->show();
 
+               ui->table_salle_ahmed->setModel(Etmp.afficher());
 }
 
 
@@ -204,7 +248,9 @@ void MainWindow::on_pb_affichier_clicked()
 
       chartView->show();
 
-
+      ////
+      QStringList list=(QStringList()<<" "<<"Numsalle"<<"Etage"<<"Capacité"<<"Type");
+      ui->comboBox_tri_ahmed->addItems(list);
 
 
 
@@ -425,7 +471,7 @@ void MainWindow::on_pushButton_afficher_ela_clicked()
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////// roua
+/////////////////////////////////// roua
 
 void MainWindow::update_label()
 {
@@ -770,5 +816,358 @@ void MainWindow::on_pushButton_mailing_clicked()
 
 
 //////////////////////////////////////////////
+///ahmed
+//statistique
 
+
+//pdp user:
+
+/*QPixmap pdp("C:/Users/dell/Downloads/ahmed.jpg");
+int w_pdp = ui->label_pdp->width();
+int h_pdp = ui->label_pdp->height();
+ui->label_pdp->setPixmap(pdp.scaled(w_pdp,h_pdp,Qt::KeepAspectRatio));
+
+//logo smart court:
+QPixmap logo("C:/Users/dell/Downloads/logo2.png");
+int w_logo = ui->label_logo->width();
+int h_logo = ui->label_logo->height();
+ui->label_logo->setPixmap(logo.scaled(w_logo,h_logo,Qt::KeepAspectRatio));
+*/
+//combobox_tri
+
+
+
+
+
+
+/*
+
+
+
+
+
+
+
+
+
+
+void MainWindow::on_pushButton_deconnexion_clicked(){close();}
+
+
+
+
+
+
+
+
+
+void MainWindow::on_pushButton_perso_clicked(){
+ui->label_acc->setStyleSheet("color: #ff0000;");
+ui->label_acc->setText("page inaccessible");
+QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });}
+
+
+
+
+void MainWindow::on_pushButton_aud_clicked(){
+ui->label_acc->setStyleSheet("color: #ff0000;");
+ui->label_acc->setText("page inaccessible");
+QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });}
+
+
+
+void MainWindow::on_pushButton_avocat_clicked(){
+ui->label_acc->setStyleSheet("color: #ff0000;");
+ui->label_acc->setText("page inaccessible");
+QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });}
+
+
+
+
+void MainWindow::on_pushButton_parametres_clicked(){
+ui->label_acc->setStyleSheet("color: #ff0000;");
+ui->label_acc->setText("page inaccessible");
+QTimer::singleShot(2000,this,[this] () { ui->label_acc->setText(""); });}
+
+
+void MainWindow::update_label(){
+data=A.read_from_arduino();
+qDebug()<<data;
+if (data=="1")
+    ui->pushButton_salle_46->setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 230, 0), stop:1 rgba(0, 230, 0));");
+else  ui->pushButton_salle_46->setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(229, 0, 0), stop:1 rgba(229, 0, 0));");
+}
+*/
+
+
+
+
+void MainWindow::on_pb_ajouter_ahmed_clicked()
+{
+int Numsalle=ui->l_Numsalle_ahmed->text().toInt();
+int etage=ui->l_etage_ahmed->text().toInt();
+int capaciter=ui->l_capaciter_ahmed->text().toInt();
+QString type=ui->l_type_ahmed->text();
+QString etat=ui->l_etat_ahmed->text();
+salle S(Numsalle,etage,capaciter,type,etat);
+bool test=S.ajouter();
+if (test){
+    ui->table_salle_ahmed->setModel(Etmp.afficher());
+
+  //ll affichage taa les salles:
+    QString state=ui->l_etat_ahmed->text();
+    int salle=ui->l_Numsalle_ahmed->text().toInt();
+    //salle 1
+    if(salle == 1){
+        if(state == "pleine"){ui->salle1_pleine->show(); ui->salle1_vide->hide();}
+        else {ui->salle1_vide->show(); ui->salle1_pleine->hide();}}
+    //salle 2
+    if(salle == 2){
+        if(state == "pleine"){ui->salle2_pleine->show(); ui->salle2_vide->hide();}
+        else {ui->salle2_vide->show(); ui->salle2_pleine->hide();}}
+    //salle 3
+    if(salle == 3){
+        if(state == "pleine"){ui->salle3_pleine->show(); ui->salle3_vide->hide();}
+        else {ui->salle3_vide->show(); ui->salle3_pleine->hide();}}
+    //salle 4
+    if(salle == 4){
+        if(state == "pleine"){ui->salle2_pleine->show(); ui->salle4_vide->hide();}
+        else {ui->salle4_vide->show(); ui->salle4_pleine->hide();}}
+    //salle 5
+    if(salle == 5){
+        if(state == "pleine"){ui->salle5_pleine->show(); ui->salle5_vide->hide();}
+        else {ui->salle5_vide->show(); ui->salle5_pleine->hide();}}
+
+
+    // ui->label_salle1->setText(state);
+    ui->label_testajout_ahmed->setStyleSheet("color: #00c800;");
+    ui->label_testajout_ahmed->setText("done!");
+    QTimer::singleShot(2000,this,[this] () { ui->label_testajout_ahmed->setText(""); });}
+else{
+      ui->label_testajout_ahmed->setStyleSheet("color: #ff0000;");
+      ui->label_testajout_ahmed->setText("Salle existe déja!");
+      QTimer::singleShot(2000,this,[this] () { ui->label_testajout_ahmed->setText(""); });}
+}
+
+
+void MainWindow::on_pb_modifier_ahmed_clicked()
+{
+int Numsalle=ui->l_Numsalle_ahmed->text().toInt();
+int etage=ui->l_etage_ahmed->text().toInt();
+int capaciter=ui->l_capaciter_ahmed->text().toInt();
+QString type=ui->l_type_ahmed->text();
+QString etat=ui->l_etat_ahmed->text();
+bool test=Etmp.modifier_salle(Numsalle,etage,capaciter,type, etat);
+        if(test){
+             ui->table_salle_ahmed->setModel(Etmp.afficher());
+             //ll affichage taa les salles:
+             QString state=ui->l_etat_ahmed->text();
+             int salle=ui->l_Numsalle_ahmed->text().toInt();
+             //salle 1
+             if(salle == 1){
+                if(state == "pleine"){ui->salle1_pleine->show(); ui->salle1_vide->hide();}
+                else {ui->salle1_vide->show(); ui->salle1_pleine->hide();}}
+             //salle 2
+             if(salle == 2){
+                if(state == "pleine"){ui->salle2_pleine->show(); ui->salle2_vide->hide();}
+                else {ui->salle2_vide->show(); ui->salle2_pleine->hide();}}
+             //salle 3
+             if(salle == 3){
+                if(state == "pleine"){ui->salle3_pleine->show(); ui->salle3_vide->hide();}
+                else {ui->salle3_vide->show(); ui->salle3_pleine->hide();}}
+             //salle 4
+             if(salle == 4){
+                if(state == "pleine"){ui->salle2_pleine->show(); ui->salle4_vide->hide();}
+                else {ui->salle4_vide->show(); ui->salle4_pleine->hide();}}
+             //salle 5
+             if(salle == 5){
+                if(state == "pleine"){ui->salle5_pleine->show(); ui->salle5_vide->hide();}
+                else {ui->salle5_vide->show(); ui->salle5_pleine->hide();}}
+             ui->label_testajout_ahmed->setStyleSheet("color: #00c800;");
+             ui->label_testajout_ahmed->setText("done!");
+             QTimer::singleShot(2000,this,[this] () { ui->label_testajout_ahmed->setText(""); });}
+        else{
+            ui->label_testajout_ahmed->setStyleSheet("color: #ff0000;");
+            ui->label_testajout_ahmed->setText("Echec");
+            QTimer::singleShot(2000,this,[this] () { ui->label_testajout_ahmed->setText(""); });}
+}
+
+
+void MainWindow::on_pb_supprimer_ahmed_clicked()
+{
+int Numsalle=ui->l_Numsalle_ahmed->text().toInt();
+bool test=Etmp.supprimer(Numsalle);
+if (test){
+   ui->table_salle_ahmed->setModel(Etmp.afficher());
+     //ll affichage taa les salles:
+     QString state=ui->l_etat_ahmed->text();
+     int salle=ui->l_Numsalle_ahmed->text().toInt();
+     //salle 1
+     if(salle == 1){ui->salle1_vide->hide(); ui->salle1_pleine->hide();}
+     //salle 2
+     if(salle == 2){ui->salle2_vide->hide(); ui->salle2_pleine->hide();}
+     //salle 3
+     if(salle == 3){ui->salle3_vide->hide(); ui->salle3_pleine->hide();}
+     //salle 4
+     if(salle == 4){ui->salle4_vide->hide(); ui->salle4_pleine->hide();}
+     //salle 5
+     if(salle == 5){ui->salle5_vide->hide(); ui->salle5_pleine->hide();}
+ ui->label_testajout_ahmed->setStyleSheet("color: #00c800;");
+ ui->label_testajout_ahmed->setText("done!");
+ QTimer::singleShot(2000,this,[this] () { ui->label_testajout_ahmed->setText(""); });}
+else{
+    ui->label_testajout_ahmed->setText("Salle n'existe pas!");
+    QTimer::singleShot(2000,this,[this] () { ui->label_testajout_ahmed->setText(""); });}
+}
+
+
+void MainWindow::on_pb_afficher_ahmed_clicked()
+{
+ui->table_salle_ahmed->setModel(Etmp.afficher());
+ui->label_testajout_ahmed->setStyleSheet("color: #00c800;");
+ui->label_testajout_ahmed->setText("done!");
+QTimer::singleShot(2000,this,[this] () { ui->label_testajout_ahmed->setText(""); });
+}
+
+
+void MainWindow::on_pb_pdf_ahmed_clicked()
+{
+QString strStream;
+QTextStream out(&strStream);
+    const int rowCount = ui->table_salle_ahmed->model()->rowCount();
+    const int columnCount = ui->table_salle_ahmed->model()->columnCount();
+             out <<  "<html>\n"
+                     "<head>\n"
+                     "<meta Content=\"Text/html; charset=Windows-1251\">\n"
+                 <<  QString("<title>%1</title>\n").arg("strTitle")
+                 <<  "</head>\n"
+                     "<body bgcolor=#ffffff link=#5000A0>\n"
+                     //"<align='right'> " << datefich << "</align>"
+                     "<center> <H1>Liste des salles</H1></br></br><table border=1 cellspacing=0 cellpadding=2>\n";
+                     // headers
+             out << "<thead><tr bgcolor=#f0f0f0> <th>Numero</th>";
+             for (int column = 0; column < columnCount; column++)
+             if (!ui->table_salle_ahmed->isColumnHidden(column))
+             out << QString("<th>%1</th>").arg(ui->table_salle_ahmed->model()->headerData(column, Qt::Horizontal).toString());
+             out << "</tr></thead>\n";
+                    // data table
+             for (int row = 0; row < rowCount; row++) {
+             out << "<tr> <td bkcolor=0>" << row+1 <<"</td>";
+             for (int column = 0; column < columnCount; column++) {
+             if (!ui->table_salle_ahmed->isColumnHidden(column)) {
+QString data = ui->table_salle_ahmed->model()->data(ui->table_salle_ahmed->model()->index(row, column)).toString().simplified();
+             out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));}}
+             out << "</tr>\n";}
+             out << "</table> </center>\n"
+                    "</body>\n"
+                    "</html>\n";
+QString fileName = QFileDialog::getSaveFileName((QWidget* )0, "Sauvegarder en PDF", QString(), "*.pdf");
+            if (QFileInfo(fileName).suffix().isEmpty()) { fileName.append(".pdf"); }
+QPrinter printer (QPrinter::PrinterResolution);
+         printer.setOutputFormat(QPrinter::PdfFormat);
+         printer.setPaperSize(QPrinter::A4);
+         printer.setOutputFileName(fileName);
+QTextDocument doc;
+         doc.setHtml(strStream);
+         doc.setPageSize(printer.pageRect().size());
+         doc.print(&printer);
+}
+
+
+void MainWindow::on_pb_imprimer_ahmed_clicked()
+{
+QPrinter printer;
+printer.setPrinterName("desiered printer name");
+QPrintDialog dialog(&printer,this);
+if(dialog.exec()== QDialog::Rejected)
+    return;
+}
+
+
+void MainWindow::on_pushButton_salle_46_pressed()
+{
+ui->pushButton_salle_46->setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 230, 0), stop:1 rgba(0, 230, 0));");
+}
+
+
+void MainWindow::on_pushButton_salle_46_released()
+{
+ui->pushButton_salle_46->setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(229, 0, 0), stop:1 rgba(229, 0, 0));");
+}
+
+
+void MainWindow::on_pushButton_tri_ahmed_clicked()
+{
+salle s;
+QSqlQuery query;
+QSqlQueryModel* model= new QSqlQueryModel();
+if (ui->comboBox_tri_ahmed->currentText()=="Numsalle"){
+          query.prepare(QString("SELECT Numsalle FROM salle"));
+          query.exec();
+          model->setQuery(query);
+          model->setHeaderData(0, Qt::Horizontal, QObject::tr("Numsalle"));
+          ui->table_salle_ahmed->setModel(model);
+          ui->label_testrecherche_ahmed->setStyleSheet("color: #00c800;");
+          ui->label_testrecherche_ahmed->setText("done!");
+          QTimer::singleShot(2000,this,[this] () { ui->label_testrecherche_ahmed->setText(""); });}
+else if (ui->comboBox_tri_ahmed->currentText()=="Etage"){
+          query.prepare(QString("SELECT etage FROM salle"));
+          query.exec();
+          model->setQuery(query);
+          model->setHeaderData(0, Qt::Horizontal, QObject::tr("etage"));
+          ui->table_salle_ahmed->setModel(model);
+          ui->label_testrecherche_ahmed->setStyleSheet("color: #00c800;");
+          ui->label_testrecherche_ahmed->setText("done!");
+          QTimer::singleShot(2000,this,[this] () { ui->label_testrecherche_ahmed->setText(""); });}
+else if (ui->comboBox_tri_ahmed->currentText()=="Capacité"){
+          query.prepare(QString("SELECT capaciter FROM salle"));
+          query.exec();
+          model->setQuery(query);
+          model->setHeaderData(0, Qt::Horizontal, QObject::tr("capaciter"));
+          ui->table_salle_ahmed->setModel(model);
+          ui->label_testrecherche_ahmed->setStyleSheet("color: #00c800;");
+          ui->label_testrecherche_ahmed->setText("done!");
+          QTimer::singleShot(2000,this,[this] () { ui->label_testrecherche_ahmed->setText(""); });}
+else if (ui->comboBox_tri_ahmed->currentText()=="Type"){
+          query.prepare(QString("SELECT type FROM salle"));
+          query.exec();
+          model->setQuery(query);
+          model->setHeaderData(0, Qt::Horizontal, QObject::tr("type"));
+          ui->table_salle_ahmed->setModel(model);
+          ui->label_testrecherche_ahmed->setStyleSheet("color: #00c800;");
+          ui->label_testrecherche_ahmed->setText("done!");
+          QTimer::singleShot(2000,this,[this] () { ui->label_testrecherche_ahmed->setText(""); });}
+else {ui->table_salle_ahmed->setModel(Etmp.afficher());
+    ui->label_testrecherche_ahmed->setStyleSheet("color: #00c800;");
+    ui->label_testrecherche_ahmed->setText("done!");
+    QTimer::singleShot(2000,this,[this] () { ui->label_testrecherche_ahmed->setText(""); });}
+}
+
+
+void MainWindow::on_pushButton_recherche_ahmed_clicked()
+{
+salle s;
+s.setNumSalle(ui->lineEdit_recherche_ahmed->text().toInt());
+ui->table_salle_ahmed->setModel(s.recherche_Numsalle(s.getNumSalle()));
+ui->label_testrecherche_ahmed->setStyleSheet("color: #00c800;");
+ui->label_testrecherche_ahmed->setText("done!");
+QTimer::singleShot(2000,this,[this] () { ui->label_testrecherche_ahmed->setText(""); });
+}
+
+void MainWindow::update_label_ahmed(){
+data=a.read_from_arduino();
+qDebug()<<data;
+if (data=="1")
+    ui->pushButton_salle_46->setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 230, 0), stop:1 rgba(0, 230, 0));");
+else  ui->pushButton_salle_46->setStyleSheet("background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(229, 0, 0), stop:1 rgba(229, 0, 0));");
+}
+
+
+
+
+
+void MainWindow::on_pushButton_6_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(3);
+}
 

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 #include <QMainWindow>
 #include "perso.h"
+#include "salle.h"
 #include"dc.h"
 #include <QtCharts>
 #include <QChartView>
@@ -89,7 +90,31 @@ private slots:
     void on_pushButton_mailing_clicked();
 
     ////////////////////////////////////////////
+    ///
+    void on_pb_ajouter_ahmed_clicked();
 
+    void on_pb_modifier_ahmed_clicked();
+
+    void on_pb_supprimer_ahmed_clicked();
+
+    void on_pb_afficher_ahmed_clicked();
+
+    void on_pb_pdf_ahmed_clicked();
+
+    void on_pb_imprimer_ahmed_clicked();
+
+    void on_pushButton_salle_46_pressed();
+
+    void on_pushButton_salle_46_released();
+
+    void on_pushButton_tri_ahmed_clicked();
+
+    void on_pushButton_recherche_ahmed_clicked();
+
+    void update_label_ahmed();
+
+
+    void on_pushButton_6_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -99,6 +124,8 @@ private:
     perso p1;
     dc d;
     Affjuridique A;
+    salle Etmp;
+
 
 };
 

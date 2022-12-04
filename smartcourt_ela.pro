@@ -28,7 +28,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     perso.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    salle.cpp
 
 HEADERS += \
     aff.juridique.h \
@@ -37,7 +38,8 @@ HEADERS += \
     dc.h \
     mainwindow.h \
     perso.h \
-    qcustomplot.h
+    qcustomplot.h \
+    salle.h
 
 FORMS += \
     mainwindow.ui
